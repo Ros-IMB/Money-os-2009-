@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e7dfca">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Money OS">
+<title>Money OS 2009 — Build 2.1</title>
+<style>
+:root{
+  --ink:#171815;--cream:#e7dfca;--paper:#f8f2df;--panel:#efe6cd;--lcd:#a9c88e;
+  --lcd2:#c8dea8;--plum:#72546f;--blue:#82b8c8;--orange:#d28b55;--green:#55764a;
+  --muted:#6f705f;--shadow:#17181524;--danger:#9a4a42;
+}
+*{box-sizing:border-box}
+html{background:var(--cream)}
+body{
+  margin:0;color:var(--ink);font-family:Inter,ui-rounded,"SF Pro Rounded",Arial,sans-serif;
+  background:
+    radial-gradient(circle at 10% 5%,#fff7 0 10%,transparent 30%),
+    linear-gradient(135deg,#eee6d2 0%,#ddd3bc 100%);
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.shell{max-width:1080px;margin:auto;padding:18px 14px 70px;position:relative;overflow:hidden}
+.shell:before,.shell:after{
+  content:"";position:fixed;z-index:-1;width:280px;height:520px;opacity:.17;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 10%,transparent 0 16%,var(--green) 17% 19%,transparent 20%),
+    radial-gradient(ellipse at 28% 26%,transparent 0 10%,var(--green) 11% 13%,transparent 14%),
+    radial-gradient(ellipse at 68% 39%,transparent 0 11%,var(--green) 12% 14%,transparent 15%),
+    radial-gradient(ellipse at 34% 57%,transparent 0 10%,var(--green) 11% 13%,transparent 14%),
+    linear-gradient(90deg,transparent 47%,var(--green) 48% 52%,transparent 53%);
+  filter:blur(.2px);
+}
+.shell:before{left:-120px;top:70px;transform:rotate(-18deg)}
+.shell:after{right:-130px;top:130px;transform:rotate(18deg) scaleX(-1)}
+.topbar{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.eyebrow{font:800 .7rem/1.2 "Courier New",monospace;letter-spacing:.15em;color:var(--muted)}
+h1{margin:.25rem 0 0;font:900 clamp(2rem,7vw,4.6rem)/.9 "Arial Rounded MT Bold",Inter,sans-serif;letter-spacing:-.07em}
+h1 span{font-weight:500;color:var(--plum);text-shadow:1px 1px 0 #fff}
+.status{
+  border:2px solid var(--ink);border-radius:999px;padding:7px 10px;background:var(--paper);
+  box-shadow:0 3px 0 var(--ink);font:900 .7rem "Courier New",monospace;white-space:nowrap
+}
+.hero{
+  border:3px solid var(--ink);border-radius:28px;padding:18px;background:
+  linear-gradient(180deg,var(--lcd2),var(--lcd));box-shadow:6px 7px 0 var(--ink);
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;position:relative;overflow:hidden
+}
+.hero:after{content:"";position:absolute;inset:8px;border:1px dashed #28382455;border-radius:20px;pointer-events:none}
+.label{font:900 .68rem "Courier New",monospace;letter-spacing:.12em;color:#2f3d2a}
+.big{font:900 clamp(2.7rem,11vw,6.3rem)/.95 "Courier New",monospace;letter-spacing:-.08em;margin:.15rem 0}
+.heroMessage{font-weight:700;max-width:700px}
+.orb{
+  width:96px;height:96px;border:4px solid var(--ink);border-radius:50%;background:
+  radial-gradient(circle at 35% 28%,#fff8 0 12%,transparent 13%),
+  linear-gradient(145deg,#dcebd0,#7faa72);
+  display:grid;place-items:center;box-shadow:inset -7px -8px 0 #0001,0 4px 0 var(--ink);z-index:1
+}
+.orb strong{font:900 1.8rem "Courier New"} .orb small{display:block;font:900 .48rem "Courier New";letter-spacing:.08em;text-align:center}
+.quickgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0}
+.mini{
+  border:2px solid var(--ink);border-radius:16px;background:var(--paper);padding:11px 12px;
+  box-shadow:3px 4px 0 var(--ink)
+}
+.mini small{display:block;font:800 .62rem "Courier New";letter-spacing:.08em;color:var(--muted)}
+.mini strong{font:900 1.1rem "Courier New"}
+nav{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:16px 0 12px}
+.tab,.btn,.filebtn{
+  border:2px solid var(--ink);border-radius:12px;background:#d9cfb5;padding:11px 10px;
+  font-weight:900;box-shadow:0 4px 0 var(--ink);transition:.12s transform,.12s box-shadow,.12s background
+}
+.tab:active,.btn:active,.filebtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.tab.active{background:var(--ink);color:#fff}
+.panel{display:none}.panel.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{
+  border:2px solid var(--ink);border-radius:20px;padding:16px;margin-bottom:12px;background:var(--paper);
+  box-shadow:4px 5px 0 var(--shadow)
+}
+.card.lcd{background:linear-gradient(180deg,#d5e7b9,#b5d097)}
+.card.console{background:linear-gradient(145deg,#ece3ca,#ddd2b7)}
+.card h2{margin:0 0 12px;font:900 .75rem "Courier New";letter-spacing:.13em;color:var(--muted)}
+.row,label{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:9px 0;font-weight:750}
+input,select{
+  width:50%;min-width:120px;border:2px solid var(--ink);border-radius:10px;padding:9px 10px;background:#fffaf0;
+  text-align:right;outline:none
+}
+input:focus,select:focus{box-shadow:0 0 0 3px #82b8c855}
+select{text-align:left}
+.btn{width:100%;margin-top:8px;background:#d7ccb2}
+.btn.primary{background:var(--blue)} .btn.good{background:#9fc28a}.btn.orange{background:#dda370}
+.btn.danger{background:#d7a09b}
+.btn.small{width:auto;padding:7px 9px;margin:4px 4px 0 0;font-size:.75rem;box-shadow:0 3px 0 var(--ink)}
+.meter{height:21px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#fff9}
+.meter>div{height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--green));transition:width .25s}
+.bill,.log{
+  border:2px solid var(--ink);border-radius:15px;padding:12px;margin:9px 0;background:#f7f1df
+}
+.bill.paid{opacity:.63;background:#e5ead8}
+.billhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.billmeta{font-size:.78rem;color:var(--muted);margin-top:3px}
+.tag{display:inline-block;border:1.5px solid var(--ink);border-radius:999px;padding:3px 7px;font:800 .63rem "Courier New"}
+.tag.paid{background:#a8c887}.tag.due{background:#dda370}
+.splitline{display:flex;justify-content:space-between;border-bottom:1px dashed #0005;padding:7px 0}
+.splitline:last-child{border-bottom:0}
+.kicker{font:900 .68rem "Courier New";letter-spacing:.1em;color:var(--muted)}
+.advice{font-weight:800;line-height:1.45}
+.callout{border-left:5px solid var(--plum);padding:10px 12px;background:#fff6;border-radius:8px}
+.filebtn{display:block;text-align:center;position:relative;margin-top:8px}
+.filebtn input{position:absolute;inset:0;opacity:0;width:100%}
+.history{max-height:310px;overflow:auto}
+.log{font-size:.83rem}
+.log time{display:block;font:700 .65rem "Courier New";color:var(--muted);margin-bottom:4px}
+.footer{text-align:center;color:var(--muted);font:700 .62rem "Courier New";margin-top:25px}
+@media(max-width:760px){
+  .grid2,.quickgrid{grid-template-columns:1fr 1fr}
+  nav{grid-template-columns:repeat(5,1fr)}
+  .tab{font-size:.62rem;padding:9px 2px}
+  .orb{width:72px;height:72px}.orb strong{font-size:1.4rem}
+}
+@media(max-width:520px){
+  .shell{padding:14px 10px 55px}.grid2{grid-template-columns:1fr}.quickgrid{grid-template-columns:1fr 1fr}
+  .topbar{align-items:center}.status{font-size:.6rem}
+  .hero{border-radius:22px;padding:15px}.big{font-size:clamp(2.4rem,15vw,4rem)}
+  .orb{width:64px;height:64px}.orb strong{font-size:1.2rem}
+  input,select{width:48%}
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="topbar">
+    <div><div class="eyebrow">PERSONAL FINANCE COMMAND SYSTEM // BUILD 2.1</div><h1>MONEY OS <span>2009</span></h1></div>
+    <div id="saveStatus" class="status">READY</div>
+  </div>
+
+  <section class="hero">
+    <div>
+      <div class="label">SAFE TO SPEND</div>
+      <div id="safeSpend" class="big">$0.00</div>
+      <div id="heroMessage" class="heroMessage">Initialize your balances to wake the system.</div>
+    </div>
+    <div class="orb"><div><strong id="shieldScore">0</strong><small>SHIELD<br>SCORE</small></div></div>
+  </section>
+
+  <section class="quickgrid">
+    <div class="mini"><small>CHECKING</small><strong id="quickChecking">$0.00</strong></div>
+    <div class="mini"><small>PROTECTED</small><strong id="quickProtected">$0.00</strong></div>
+    <div class="mini"><small>SAVINGS</small><strong id="quickSavings">$0.00</strong></div>
+    <div class="mini"><small>ACTIVE BILLS</small><strong id="quickBills">$0.00</strong></div>
+  </section>
+
+  <nav>
+    <button class="tab active" data-tab="home">HOME</button>
+    <button class="tab" data-tab="payday">PAYDAY</button>
+    <button class="tab" data-tab="bills">BILLS</button>
+    <button class="tab" data-tab="debt">DEBT</button>
+    <button class="tab" data-tab="vault">VAULT</button>
+  </nav>
+
+  <section id="home" class="panel active">
+    <div class="grid2">
+      <article class="card console">
+        <h2>CURRENT POSITION</h2>
+        <label>Checking <input id="checking" type="number" step="0.01" inputmode="decimal"></label>
+        <label>Savings <input id="savings" type="number" step="0.01" inputmode="decimal"></label>
+        <label>Do-not-touch cushion <input id="cushion" type="number" step="0.01" inputmode="decimal"></label>
+      </article>
+      <article class="card">
+        <h2>PROTECTED BUCKETS</h2>
+        <div class="splitline"><span>Bills Reserved</span><strong id="billsReserved">$0.00</strong></div>
+        <div class="splitline"><span>Debt Attack</span><strong id="debtBucket">$0.00</strong></div>
+        <div class="splitline"><span>Personal</span><strong id="personalBucket">$0.00</strong></div>
+        <div class="splitline"><span>Free Buffer</span><strong id="freeBuffer">$0.00</strong></div>
+      </article>
+    </div>
+    <article class="card lcd">
+      <h2>MONEY OS READOUT</h2>
+      <div id="systemAdvice" class="advice">Add your balances and bills. The system will tell you what is protected and what is actually available.</div>
+    </article>
+    <div class="grid2">
+      <article class="card">
+        <h2>ALLOCATION MODE</h2>
+        <label>Strategy
+          <select id="mode">
+            <option value="balanced">Balanced</option>
+            <option value="debt">Debt Attack</option>
+            <option value="save">Save First</option>
+            <option value="stabilize">Stabilize</option>
+          </select>
+        </label>
+        <div id="modeHint" class="callout"></div>
+      </article>
+      <article class="card">
+        <h2>RECENT ACTIVITY</h2>
+        <div id="history" class="history"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="payday" class="panel">
+    <div class="grid2">
+      <article class="card console">
+        <h2>PAYDAY SPLITTER</h2>
+        <label>Paycheck <input id="paycheck" type="number" step="0.01" inputmode="decimal"></label>
+        <label>Savings % <input id="savePct" type="number" min="0" max="100" step="1"></label>
+        <label>Personal % <input id="personalPct" type="number" min="0" max="100" step="1"></label>
+        <label>Extra debt target <input id="debtTarget" type="number" step="0.01" inputmode="decimal"></label>
+        <button id="previewPayday" class="btn primary">CALCULATE SPLIT</button>
+      </article>
+      <article class="card lcd">
+        <h2>PAYDAY INSTRUCTIONS</h2>
+        <div class="splitline"><span>Bills</span><strong id="splitBills">$0.00</strong></div>
+        <div class="splitline"><span>Savings transfer</span><strong id="splitSavings">$0.00</strong></div>
+        <div class="splitline"><span>Personal</span><strong id="splitPersonal">$0.00</strong></div>
+        <div class="splitline"><span>Debt Attack</span><strong id="splitDebt">$0.00</strong></div>
+        <div class="splitline"><span>Free Buffer</span><strong id="splitBuffer">$0.00</strong></div>
+        <button id="commitPayday" class="btn good">COMMIT PAYDAY</button>
+      </article>
+    </div>
+    <article class="card">
+      <h2>WHAT THIS COMMIT DOES</h2>
+      <div class="callout">Adds the paycheck to checking, immediately moves the savings portion out of checking into Savings, then reserves the rest inside your checking account by purpose. It will not let the same paycheck sit there as an easy duplicate commit.</div>
+    </article>
+  </section>
+
+  <section id="bills" class="panel">
+    <div class="grid2">
+      <article class="card console">
+        <h2>ADD RECURRING BILL</h2>
+        <label>Name <input id="billName" placeholder="Car insurance"></label>
+        <label>Amount <input id="billAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+        <label>Due day <input id="billDay" type="number" min="1" max="31" placeholder="1–31"></label>
+        <button id="addBill" class="btn primary">ADD BILL</button>
+      </article>
+      <article class="card">
+        <h2>BILL CONTROL</h2>
+        <div class="splitline"><span>Unpaid this cycle</span><strong id="unpaidBills">$0.00</strong></div>
+        <div class="splitline"><span>Already reserved</span><strong id="reservedBills2">$0.00</strong></div>
+        <div class="splitline"><span>Still needs reserving</span><strong id="billGap">$0.00</strong></div>
+        <button id="resetBills" class="btn orange">START NEW BILL CYCLE</button>
+      </article>
+    </div>
+    <div id="billList"></div>
+  </section>
+
+  <section id="debt" class="panel">
+    <div class="grid2">
+      <article class="card console">
+        <h2>DEBT ESCAPE SIMULATOR</h2>
+        <label>Balance <input id="debtBalance" type="number" step="0.01" inputmode="decimal"></label>
+        <label>APR % <input id="debtApr" type="number" step="0.01" inputmode="decimal"></label>
+        <label>Required payment <input id="debtPayment" type="number" step="0.01" inputmode="decimal"></label>
+        <label>Extra monthly <input id="debtExtra" type="number" step="0.01" inputmode="decimal"></label>
+        <button id="runDebt" class="btn primary">SIMULATE PAYOFF</button>
+      </article>
+      <article class="card lcd">
+        <h2>ESCAPE READOUT</h2>
+        <div class="splitline"><span>Estimated months</span><strong id="payoffMonths">—</strong></div>
+        <div class="splitline"><span>Estimated payoff</span><strong id="payoffDate">—</strong></div>
+        <div class="splitline"><span>Estimated interest</span><strong id="payoffInterest">—</strong></div>
+        <div class="splitline"><span>Total monthly attack</span><strong id="totalDebtPayment">—</strong></div>
+        <div class="billmeta">Monthly simulation for planning. Your lender's actual payoff can differ because of daily interest, fees, and payment timing.</div>
+      </article>
+    </div>
+    <article class="card">
+      <h2>DEBT BUCKET</h2>
+      <div class="splitline"><span>Reserved for debt</span><strong id="debtReserved2">$0.00</strong></div>
+      <label>Apply payment <input id="applyDebtAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+      <button id="applyDebt" class="btn good">APPLY DEBT PAYMENT</button>
+    </article>
+  </section>
+
+  <section id="vault" class="panel">
+    <div class="grid2">
+      <article class="card">
+        <h2>SAVINGS VAULT</h2>
+        <label>Goal <input id="savingsGoal" type="number" step="0.01" inputmode="decimal"></label>
+        <div class="meter"><div id="savingsBar"></div></div>
+        <div class="splitline"><span>Progress</span><strong id="savingsProgress">0%</strong></div>
+        <div class="splitline"><span>Remaining</span><strong id="savingsRemaining">$0.00</strong></div>
+      </article>
+      <article class="card">
+        <h2>BACKUP + SAFETY</h2>
+        <button id="exportData" class="btn primary">EXPORT BACKUP</button>
+        <label class="filebtn">IMPORT BACKUP<input id="importData" type="file" accept="application/json"></label>
+        <button id="resetData" class="btn danger">RESET LOCAL DATA</button>
+      </article>
+    </div>
+    <article class="card">
+      <h2>BUILD 2.1 NOTES</h2>
+      <div class="callout">Your data stays in this browser on this exact site. Export a backup before major changes. Cloud sync and account login are a future layer, not part of this build.</div>
+    </article>
+  </section>
+
+  <div class="footer">MONEY OS 2009 // BUILD 2.1 // LOCAL-FIRST FINANCE COCKPIT</div>
+</main>
+<script>
+const KEY='moneyOS2009_v2';
+const defaults={
+  checking:0,savings:0,cushion:0,mode:'balanced',
+  buckets:{bills:0,personal:0,debt:0,buffer:0},
+  payday:{paycheck:0,savePct:15,personalPct:10,debtTarget:0,lastSplit:null},
+  bills:[],
+  debt:{balance:0,apr:0,payment:0,extra:0},
+  savingsGoal:3000,
+  history:[]
+};
+const $=id=>document.getElementById(id);
+const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v)||0);
+const val=id=>Math.max(0,Number($(id).value)||0);
+const clone=o=>JSON.parse(JSON.stringify(o));
+function merge(a,b){
+  if(!b||typeof b!=='object') return clone(a);
+  const out=clone(a);
+  Object.keys(b).forEach(k=>{
+    out[k]=(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&out[k]&&typeof out[k]==='object'&&!Array.isArray(out[k]))
+      ?merge(out[k],b[k]):b[k];
+  });
+  return out;
+}
+let state;
+try{state=merge(defaults,JSON.parse(localStorage.getItem(KEY)||'null'))}catch{state=clone(defaults)}
+if(!Array.isArray(state.history))state.history=[];
+function stamp(){return new Date().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+function log(msg){
+  state.history.unshift({at:stamp(),msg});
+  state.history=state.history.slice(0,30);
+}
+let saveTimer;
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  $('saveStatus').textContent='SAVED ✓';
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>$('saveStatus').textContent='READY',900);
+}
+function billsUnpaid(){return state.bills.filter(b=>!b.paid).reduce((t,b)=>t+(Number(b.amount)||0),0)}
+function billGap(){return Math.max(0,billsUnpaid()-state.buckets.bills)}
+function protectedTotal(){return state.cushion+state.buckets.bills+state.buckets.debt}
+function safeSpend(){return Math.max(0,state.checking-protectedTotal())}
+function modeCopy(){
+  return {
+    balanced:'Bills first, then a steady mix of savings, personal money, debt attack, and buffer.',
+    debt:'Protect bills and cushion, then push more available cash toward debt.',
+    save:'Protect bills first, then favor savings before debt and personal spending.',
+    stabilize:'Protect bills and build breathing room before aggressive debt or savings moves.'
+  }[state.mode]||'Balanced allocation.';
+}
+function suggestedSplit(){
+  const p=Math.max(0,state.payday.paycheck||0);
+  let left=p;
+  const bills=Math.min(left,billGap()); left-=bills;
+  let savePct=state.payday.savePct/100, personalPct=state.payday.personalPct/100, debtTarget=state.payday.debtTarget;
+  if(state.mode==='debt'){savePct*=.75;personalPct*=.65;debtTarget=Math.max(debtTarget,left*.35)}
+  if(state.mode==='save'){savePct=Math.max(savePct,.22);personalPct*=.8}
+  if(state.mode==='stabilize'){savePct=Math.min(savePct,.10);personalPct=Math.min(personalPct,.08);debtTarget=Math.min(debtTarget,left*.10)}
+  const savings=Math.min(left,p*savePct); left-=savings;
+  const personal=Math.min(left,p*personalPct); left-=personal;
+  const debt=Math.min(left,Math.max(0,debtTarget)); left-=debt;
+  return {bills,savings,personal,debt,buffer:left};
+}
+function shield(){
+  if(state.checking<=0&&state.savings<=0)return 0;
+  const monthly=Math.max(1,state.bills.reduce((t,b)=>t+(Number(b.amount)||0),0));
+  const billCoverage=Math.min(1,state.buckets.bills/Math.max(1,billsUnpaid()))*35;
+  const cushionCoverage=Math.min(1,state.checking/Math.max(1,state.cushion||monthly*.5))*25;
+  const savingsCoverage=Math.min(1,state.savings/monthly)*25;
+  const debtReady=state.debt.balance?Math.min(1,state.buckets.debt/Math.max(1,state.debt.payment||1))*15:15;
+  return Math.max(0,Math.min(100,Math.round(billCoverage+cushionCoverage+savingsCoverage+debtReady)));
+}
+function systemAdvice(){
+  if(state.checking===0&&state.savings===0)return 'Enter your real balances, then add recurring bills. Money OS will separate protected money from spendable money.';
+  if(billGap()>0)return `${money(billGap())} still needs to be reserved for active bills. Treat that amount as priority money before extra spending.`;
+  if(state.checking<protectedTotal())return `Your checking balance is below the amount currently protected. Safe to Spend is locked at ${money(0)} until the gap is repaired.`;
+  if(state.debt.balance>0&&state.buckets.debt>0)return `${money(state.buckets.debt)} is already staged in Debt Attack. Safe to Spend excludes it so you do not accidentally consume it.`;
+  return `${money(safeSpend())} is currently outside your cushion, bill reserve, and debt reserve. That is your maximum safe-spend ceiling—not a requirement to spend it.`;
+}
+function setInput(id,v,zeroBlank=true){const el=$(id);if(document.activeElement===el)return;el.value=zeroBlank?(v||''):v}
+function render(){
+  setInput('checking',state.checking);setInput('savings',state.savings);setInput('cushion',state.cushion);
+  setInput('paycheck',state.payday.paycheck);setInput('savePct',state.payday.savePct,false);setInput('personalPct',state.payday.personalPct,false);setInput('debtTarget',state.payday.debtTarget);
+  setInput('debtBalance',state.debt.balance);setInput('debtApr',state.debt.apr);setInput('debtPayment',state.debt.payment);setInput('debtExtra',state.debt.extra);
+  setInput('savingsGoal',state.savingsGoal);if(document.activeElement!==$('mode'))$('mode').value=state.mode;
+  $('safeSpend').textContent=money(safeSpend());$('quickChecking').textContent=money(state.checking);$('quickProtected').textContent=money(protectedTotal());
+  $('quickSavings').textContent=money(state.savings);$('quickBills').textContent=money(billsUnpaid());
+  $('billsReserved').textContent=money(state.buckets.bills);$('debtBucket').textContent=money(state.buckets.debt);
+  $('personalBucket').textContent=money(state.buckets.personal);$('freeBuffer').textContent=money(state.buckets.buffer);
+  $('shieldScore').textContent=shield();$('heroMessage').textContent=billsUnpaid()?`${money(billsUnpaid())} in active bills are waiting this cycle.`:'No unpaid bills are active this cycle.';
+  $('systemAdvice').textContent=systemAdvice();$('modeHint').textContent=modeCopy();
+  const q=state.payday.lastSplit||suggestedSplit();
+  $('splitBills').textContent=money(q.bills);$('splitSavings').textContent=money(q.savings);$('splitPersonal').textContent=money(q.personal);$('splitDebt').textContent=money(q.debt);$('splitBuffer').textContent=money(q.buffer);
+  $('unpaidBills').textContent=money(billsUnpaid());$('reservedBills2').textContent=money(state.buckets.bills);$('billGap').textContent=money(billGap());
+  $('debtReserved2').textContent=money(state.buckets.debt);
+  const pct=state.savingsGoal?Math.min(100,state.savings/state.savingsGoal*100):0;
+  $('savingsBar').style.width=pct+'%';$('savingsProgress').textContent=Math.round(pct)+'%';$('savingsRemaining').textContent=money(Math.max(0,state.savingsGoal-state.savings));
+  $('billList').innerHTML=state.bills.length?state.bills.map((b,i)=>`
+    <div class="bill ${b.paid?'paid':''}">
+      <div class="billhead"><div><strong>${escapeHtml(b.name)}</strong><div class="billmeta">Due day ${b.day}</div></div>
+      <div style="text-align:right"><strong>${money(b.amount)}</strong><br><span class="tag ${b.paid?'paid':'due'}">${b.paid?'PAID':'UNPAID'}</span></div></div>
+      <button class="btn small ${b.paid?'orange':'good'}" onclick="togglePaid(${i})">${b.paid?'UNDO PAYMENT':'MARK PAID'}</button>
+      <button class="btn small danger" onclick="removeBill(${i})">REMOVE</button>
+    </div>`).join(''):'<div class="card">No bills added yet.</div>';
+  $('history').innerHTML=state.history.length?state.history.map(x=>`<div class="log"><time>${escapeHtml(x.at)}</time>${escapeHtml(x.msg)}</div>`).join(''):'<div class="billmeta">No activity yet.</div>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function bind(id,path){
+  $(id).addEventListener('change',()=>{
+    let o=state,p=path.split('.');
+    for(let i=0;i<p.length-1;i++)o=o[p[i]];
+    o[p[p.length-1]]=val(id);save();render();
+  });
+}
+['checking','savings','cushion'].forEach(id=>bind(id,id));
+bind('paycheck','payday.paycheck');bind('savePct','payday.savePct');bind('personalPct','payday.personalPct');bind('debtTarget','payday.debtTarget');
+bind('debtBalance','debt.balance');bind('debtApr','debt.apr');bind('debtPayment','debt.payment');bind('debtExtra','debt.extra');bind('savingsGoal','savingsGoal');
+$('mode').addEventListener('change',()=>{state.mode=$('mode').value;state.payday.lastSplit=null;log(`Allocation mode changed to ${state.mode}.`);save();render()});
+document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');$(btn.dataset.tab).classList.add('active');
+});
+$('previewPayday').onclick=()=>{state.payday.lastSplit=suggestedSplit();save();render()};
+$('commitPayday').onclick=()=>{
+  const p=Math.max(0,state.payday.paycheck||0);if(!p)return alert('Enter a paycheck first.');
+  const q=state.payday.lastSplit||suggestedSplit();
+  state.checking+=p-q.savings;state.savings+=q.savings;
+  state.buckets.bills+=q.bills;state.buckets.personal+=q.personal;state.buckets.debt+=q.debt;state.buckets.buffer+=q.buffer;
+  log(`Payday committed: ${money(p)} received; ${money(q.savings)} moved to savings.`);
+  state.payday.paycheck=0;state.payday.lastSplit=null;save();render();
+};
+$('addBill').onclick=()=>{
+  const name=$('billName').value.trim(),amount=val('billAmount'),day=Math.max(1,Math.min(31,Math.round(val('billDay'))||1));
+  if(!name||!amount)return alert('Enter a bill name and amount.');
+  state.bills.push({name,amount,day,paid:false});log(`Bill added: ${name} ${money(amount)} due day ${day}.`);
+  $('billName').value='';$('billAmount').value='';$('billDay').value='';save();render();
+};
+window.togglePaid=i=>{
+  const b=state.bills[i];if(!b)return;
+  if(!b.paid){
+    if(state.checking<b.amount&&!confirm(`Checking is below ${money(b.amount)}. Record this bill as paid anyway?`))return;
+    state.checking=Math.max(0,state.checking-b.amount);
+    state.buckets.bills=Math.max(0,state.buckets.bills-b.amount);
+    b.paid=true;log(`Bill paid: ${b.name} ${money(b.amount)}.`);
+  }else{
+    state.checking+=b.amount;state.buckets.bills+=b.amount;b.paid=false;log(`Payment undone: ${b.name} ${money(b.amount)} restored.`);
+  }
+  save();render();
+};
+window.removeBill=i=>{
+  const b=state.bills[i];if(!b)return;
+  if(!confirm(`Remove ${b.name}?`))return;
+  state.bills.splice(i,1);log(`Bill removed: ${b.name}.`);save();render();
+};
+$('resetBills').onclick=()=>{
+  if(!state.bills.length)return alert('No bills to reset.');
+  if(!confirm('Start a new bill cycle and mark every recurring bill unpaid?'))return;
+  state.bills.forEach(b=>b.paid=false);log('New bill cycle started.');save();render();
+};
+function simulateDebt(){
+  let bal=Math.max(0,state.debt.balance),r=Math.max(0,state.debt.apr)/1200,p=Math.max(0,state.debt.payment+state.debt.extra),m=0,int=0;
+  if(!bal||!p){$('payoffMonths').textContent='—';$('payoffDate').textContent='—';$('payoffInterest').textContent='—';$('totalDebtPayment').textContent=money(p);return}
+  while(bal>.005&&m<1200){
+    const interest=bal*r;
+    if(r>0&&p<=interest){m=Infinity;break}
+    int+=interest;bal+=interest;bal-=Math.min(p,bal);m++;
+  }
+  $('payoffMonths').textContent=isFinite(m)?m:'Payment too low';
+  $('payoffInterest').textContent=isFinite(m)?money(int):'—';$('totalDebtPayment').textContent=money(p);
+  if(isFinite(m)){const d=new Date();d.setMonth(d.getMonth()+m);$('payoffDate').textContent=d.toLocaleDateString([], {month:'short',year:'numeric'})}
+  else $('payoffDate').textContent='—';
+}
+$('runDebt').onclick=simulateDebt;
+$('applyDebt').onclick=()=>{
+  const requested=val('applyDebtAmount');if(!requested)return alert('Enter a payment amount.');
+  const amount=Math.min(requested,state.buckets.debt||requested,state.checking,state.debt.balance||requested);
+  if(amount<=0)return alert('No available amount can be applied.');
+  state.checking=Math.max(0,state.checking-amount);state.buckets.debt=Math.max(0,state.buckets.debt-amount);
+  if(state.debt.balance)state.debt.balance=Math.max(0,state.debt.balance-amount);
+  log(`Debt payment recorded: ${money(amount)}.`);
+  $('applyDebtAmount').value='';save();render();simulateDebt();
+};
+$('exportData').onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='money-os-2009-backup.json';a.click();URL.revokeObjectURL(a.href);
+};
+$('importData').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{state=merge(defaults,JSON.parse(r.result));log('Backup imported.');save();render();simulateDebt()}catch{alert('That backup file could not be read.')}};
+  r.readAsText(f);
+};
+$('resetData').onclick=()=>{
+  if(!confirm('Erase Money OS data stored in this browser? Export a backup first if you need it.'))return;
+  state=clone(defaults);localStorage.removeItem(KEY);log('Local data reset.');save();render();simulateDebt();
+};
+render();simulateDebt();
+</script>
+</body>
+</html>
