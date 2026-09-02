@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1423">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Money OS 2009">
+<title>Money OS 2009 — Build 2.3.1</title>
+<style>
+:root{
+  --ink:#101318;--cream:#eee4cb;--paper:#faf4df;--sand:#d7c9aa;--lcd:#a9ca8e;--lcd2:#d1e7ac;
+  --space:#0d1220;--space2:#161d30;--violet:#7d5ea7;--violet2:#ae8bd4;--cyan:#72c7db;--orange:#e39b61;
+  --green:#6fa05d;--pink:#d97da9;--yellow:#edcc6c;--red:#c7605d;--line:#1a1e27;--muted:#6c6c63;
+}
+*{box-sizing:border-box}
+html{background:var(--space)}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  font-family:Inter,ui-rounded,"SF Pro Rounded","Segoe UI",Arial,sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%,#39426a 0 1px,transparent 2px),
+    radial-gradient(circle at 80% 15%,#ffffffc0 0 1px,transparent 2px),
+    radial-gradient(circle at 35% 72%,#7bb7ff 0 1px,transparent 2px),
+    radial-gradient(circle at 65% 84%,#ffffff90 0 1px,transparent 2px),
+    linear-gradient(180deg,#0d1220 0%,#13182a 55%,#111726 100%);
+  background-size:120px 120px,170px 170px,210px 210px,260px 260px,auto;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{
+  max-width:1180px;margin:auto;padding:18px 14px 70px;position:relative;
+}
+.chrome{
+  border:3px solid #0b0d12;border-radius:34px;padding:12px;
+  background:linear-gradient(145deg,#f1e8d3,#d8c9a8 55%,#b9aa8e);
+  box-shadow:0 18px 55px #0008,inset 0 0 0 1px #fff8;
+}
+.shell{
+  border:2px solid #1f2430;border-radius:25px;overflow:hidden;
+  background:
+    radial-gradient(circle at 10% 10%,#ffffff55 0 1px,transparent 2px),
+    linear-gradient(180deg,#efe6d0,#e6dcc2);
+  position:relative;
+}
+.shell:before,.shell:after{
+  content:"";position:absolute;pointer-events:none;z-index:0;opacity:.22
+}
+.shell:before{
+  width:400px;height:620px;left:-160px;top:60px;
+  background:
+    radial-gradient(ellipse at 55% 13%,transparent 0 14%,#55764a 15% 17%,transparent 18%),
+    radial-gradient(ellipse at 30% 30%,transparent 0 9%,#55764a 10% 12%,transparent 13%),
+    radial-gradient(ellipse at 70% 45%,transparent 0 10%,#55764a 11% 13%,transparent 14%),
+    radial-gradient(ellipse at 33% 60%,transparent 0 9%,#55764a 10% 12%,transparent 13%),
+    linear-gradient(90deg,transparent 49%,#55764a 50% 52%,transparent 53%);
+  transform:rotate(-18deg)
+}
+.shell:after{
+  width:360px;height:520px;right:-155px;bottom:120px;
+  background:
+    radial-gradient(ellipse at 55% 13%,transparent 0 14%,#72546f 15% 17%,transparent 18%),
+    radial-gradient(ellipse at 30% 30%,transparent 0 9%,#72546f 10% 12%,transparent 13%),
+    radial-gradient(ellipse at 70% 45%,transparent 0 10%,#72546f 11% 13%,transparent 14%),
+    linear-gradient(90deg,transparent 49%,#72546f 50% 52%,transparent 53%);
+  transform:rotate(17deg) scaleX(-1)
+}
+.header{
+  position:relative;z-index:3;padding:18px 18px 13px;display:flex;justify-content:space-between;gap:15px;align-items:center;
+  background:linear-gradient(180deg,#fff8,#fff1 70%,transparent)
+}
+.brand small{display:block;font:900 .67rem "Courier New",monospace;letter-spacing:.18em;color:#56594f}
+.brand h1{margin:.25rem 0 0;font:900 clamp(2rem,7vw,4.8rem)/.9 "Arial Rounded MT Bold",Inter,sans-serif;letter-spacing:-.07em}
+.brand h1 span{font-weight:500;color:var(--violet);text-shadow:1px 1px 0 #fff}
+.sysrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+  border:2px solid var(--ink);border-radius:999px;padding:7px 10px;background:#f8f0da;
+  box-shadow:0 3px 0 var(--ink);font:900 .66rem "Courier New",monospace
+}
+.led{display:inline-block;width:8px;height:8px;border-radius:50%;background:#6aa65f;box-shadow:0 0 8px #6aa65f;margin-right:5px}
+.deck{
+  position:relative;z-index:3;margin:0 13px 13px;border:3px solid #10131a;border-radius:26px;overflow:hidden;
+  background:linear-gradient(160deg,#101626 0%,#1a2033 62%,#242945 100%);
+  box-shadow:inset 0 0 0 1px #ffffff18,0 8px 0 #1115;
+}
+.decktop{
+  display:grid;grid-template-columns:1.3fr .7fr;gap:14px;padding:18px;
+}
+.hero{
+  border:2px solid #06080d;border-radius:22px;padding:18px;min-height:240px;color:#eef8e7;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 82% 15%,#ffffff55 0 2px,transparent 3px),
+    radial-gradient(circle at 60% 35%,#ffffff30 0 1px,transparent 2px),
+    linear-gradient(160deg,#264332 0%,#4c6f58 42%,#8bb77b 100%);
+  box-shadow:inset 0 0 22px #0007,0 6px 0 #0005
+}
+.hero:after{
+  content:"";position:absolute;right:-70px;bottom:-80px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle at 35% 25%,#d6efbb 0 12%,#9dc57f 13% 46%,#648b59 47% 65%,#2b4a33 66%);
+  opacity:.42
+}
+.hero .eyebrow{font:900 .67rem "Courier New";letter-spacing:.13em;color:#d9f0cc}
+.hero .big{font:900 clamp(3rem,9vw,6.8rem)/.9 "Courier New";letter-spacing:-.08em;margin:.18rem 0}
+.hero .heroText{font-weight:800;max-width:680px;position:relative;z-index:2}
+.statbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px;position:relative;z-index:2}
+.stat{
+  border:1px solid #0b130c;border-radius:12px;padding:9px;background:#e3f0d2dd;color:#172114
+}
+.stat small{display:block;font:800 .58rem "Courier New";letter-spacing:.08em;color:#4f6148}
+.stat strong{font:900 1rem "Courier New"}
+.sidepod{
+  border:2px solid #06080d;border-radius:22px;background:linear-gradient(180deg,#f2e8cf,#d5c6a7);
+  box-shadow:inset 0 0 0 1px #fff8,0 6px 0 #0005;padding:14px;display:flex;flex-direction:column;gap:12px
+}
+.profile{
+  border:2px solid #1b1d22;border-radius:16px;background:#fff7e5;padding:12px;
+  box-shadow:3px 4px 0 #1c1e25;
+}
+.profile .title{font:900 .68rem "Courier New";letter-spacing:.1em;color:var(--muted);margin-bottom:8px}
+.profileRow{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center}
+.avatar{
+  width:64px;height:64px;border:2px solid #111;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#8c6bb6,#c49ae3);box-shadow:inset -6px -6px 0 #0001
+}
+.avatar svg{width:52px;height:52px}
+.statusBox{font-size:.8rem;line-height:1.35}
+.statusBox strong{display:block;font-size:.95rem}
+.friendline{margin-top:8px;border-top:1px dashed #0005;padding-top:7px;font:700 .7rem "Courier New"}
+.mascot{
+  flex:1;border:2px solid #090b0f;border-radius:16px;background:linear-gradient(180deg,#1c2235,#111827);
+  color:#eaf6ff;padding:12px;position:relative;overflow:hidden;min-height:145px
+}
+.mascot .label{font:900 .62rem "Courier New";letter-spacing:.1em;color:#99d6e7}
+.buddy{display:flex;gap:10px;align-items:center;margin-top:8px}
+.bot{
+  width:86px;height:86px;flex:0 0 86px;border:3px solid #090b0f;border-radius:38% 38% 42% 42%;
+  background:linear-gradient(145deg,#8fd9eb,#587ea4);position:relative;box-shadow:inset -8px -8px 0 #0002
+}
+.bot:before,.bot:after{content:"";position:absolute;top:30px;width:14px;height:14px;border-radius:50%;background:#111;box-shadow:0 0 0 5px #d7fbff}
+.bot:before{left:18px}.bot:after{right:18px}
+.botmouth{position:absolute;left:30px;bottom:17px;width:24px;height:8px;border-bottom:3px solid #0b0d12;border-radius:0 0 50% 50%}
+.antenna{position:absolute;left:39px;top:-18px;width:5px;height:18px;background:#111}
+.antenna:after{content:"";position:absolute;left:-4px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px #e39b61}
+.speech{font-weight:750;font-size:.79rem;line-height:1.35}
+.blades{
+  padding:0 12px 15px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px
+}
+.blade{
+  border:2px solid #080a0f;border-radius:17px 17px 10px 10px;padding:12px 8px 10px;color:#12151b;
+  min-height:84px;position:relative;overflow:hidden;box-shadow:0 4px 0 #0006;font-weight:900
+}
+.blade small{display:block;font:800 .58rem "Courier New";letter-spacing:.09em;margin-top:4px;opacity:.75}
+.blade:nth-child(1){background:linear-gradient(180deg,#b9d78c,#7eab67)}
+.blade:nth-child(2){background:linear-gradient(180deg,#90d1df,#63a8bc)}
+.blade:nth-child(3){background:linear-gradient(180deg,#edbb7f,#ce8850)}
+.blade:nth-child(4){background:linear-gradient(180deg,#bda0df,#8264ac)}
+.blade:nth-child(5){background:linear-gradient(180deg,#ef9abd,#cf6e9d)}
+.blade:nth-child(6){background:linear-gradient(180deg,#eddb82,#c5a84f)}
+.blade.active{transform:translateY(-7px);box-shadow:0 11px 0 #0007;outline:2px solid #fff8}
+.blade:after{content:"";position:absolute;right:-14px;bottom:-22px;width:58px;height:58px;border-radius:50%;background:#fff3}
+.content{position:relative;z-index:3;padding:0 14px 16px}
+.panel{display:none}.panel.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{
+  border:2px solid #181b20;border-radius:20px;padding:15px;background:var(--paper);
+  box-shadow:4px 5px 0 #171a2040;margin-bottom:12px;position:relative;overflow:hidden
+}
+.card h2{margin:0 0 12px;font:900 .73rem "Courier New";letter-spacing:.13em;color:#686a5d}
+.card.lcd{background:linear-gradient(180deg,#d5e8b9,#b6d196)}
+.card.console{background:linear-gradient(145deg,#eee4ca,#d8caad)}
+.card.space{background:linear-gradient(160deg,#1b2134,#101624);color:#ecf4ff;border-color:#05070b}
+.card.space h2{color:#9fd5e4}
+label,.line{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:8px 0;font-weight:750}
+input,select{
+  width:50%;min-width:120px;border:2px solid #171a20;border-radius:10px;padding:9px 10px;background:#fffaf0;text-align:right;outline:none
+}
+select{text-align:left}
+input:focus,select:focus{box-shadow:0 0 0 3px #72c7db55}
+.btn,.filebtn{
+  width:100%;margin-top:8px;border:2px solid #111319;border-radius:12px;padding:10px;font-weight:900;
+  background:#d6c9aa;box-shadow:0 4px 0 #111319
+}
+.btn.primary{background:#83c4d3}.btn.good{background:#9fc383}.btn.orange{background:#dfa06c}.btn.danger{background:#d78c88}
+.btn.small{width:auto;padding:7px 9px;margin:4px 4px 0 0;font-size:.74rem;box-shadow:0 3px 0 #111319}
+.btn:active,.filebtn:active{transform:translateY(3px);box-shadow:0 1px 0 #111319}
+.split{display:flex;justify-content:space-between;border-bottom:1px dashed #0005;padding:7px 0}.split:last-child{border-bottom:0}
+.bill,.log{border:2px solid #171a20;border-radius:14px;padding:11px;margin:8px 0;background:#f8f2df}
+.bill.paid{opacity:.62;background:#e5ead9}
+.billhead{display:flex;justify-content:space-between;gap:10px}
+.meta{font-size:.76rem;color:#6e7064;margin-top:3px}
+.tag{display:inline-block;border:1.5px solid #111;border-radius:999px;padding:3px 7px;font:800 .62rem "Courier New"}
+.tag.good{background:#a9ca8e}.tag.warn{background:#e2a06c}
+.meter{height:20px;border:2px solid #15181d;border-radius:999px;overflow:hidden;background:#fff8}
+.meter>div{height:100%;width:0;background:linear-gradient(90deg,#df9b61,#73995f);transition:.25s width}
+.filebtn{display:block;text-align:center;position:relative}.filebtn input{position:absolute;inset:0;width:100%;opacity:0}
+.history{max-height:300px;overflow:auto}
+.log time{display:block;font:700 .63rem "Courier New";color:#77786c;margin-bottom:4px}
+.consoleStrip{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:10px 14px 14px;
+  position:relative;z-index:3
+}
+.knob{width:38px;height:38px;border:3px solid #171a20;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9aa8b 35%,#6f624e 70%);box-shadow:0 3px 0 #111}
+.consoleStrip .track{height:6px;border-radius:99px;background:#1c1f27;box-shadow:inset 0 1px 2px #0007}
+.tip{font:800 .68rem "Courier New";color:#5c5e54;text-align:center}
+.footer{text-align:center;color:#bdc5d6;font:700 .62rem "Courier New";padding-top:18px}
+@media(max-width:860px){
+  .decktop,.grid2{grid-template-columns:1fr}
+  .statbar{grid-template-columns:repeat(2,1fr)}
+  .blades{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:620px){
+  .app{padding:8px 6px 40px}.chrome{padding:7px;border-radius:22px}.shell{border-radius:18px}
+  .header{padding:13px 10px}.brand h1{font-size:2.45rem}.sysrow .pill:nth-child(2){display:none}
+  .deck{margin:0 7px 8px}.decktop{padding:10px}.hero{min-height:220px;padding:14px}.hero .big{font-size:3.4rem}
+  .sidepod{padding:10px}.blades{padding:0 7px 11px;gap:5px;grid-template-columns:repeat(3,1fr)}.blade{font-size:.69rem;padding:9px 3px;min-height:66px}.blade small{font-size:.48rem}
+  .content{padding:0 8px 11px}.profileRow{grid-template-columns:54px 1fr}.avatar{width:54px;height:54px}.avatar svg{width:44px}
+  .bot{width:72px;height:72px;flex-basis:72px}.bot:before,.bot:after{top:26px}.bot:before{left:13px}.bot:after{right:13px}.botmouth{left:24px;bottom:13px}
+  input,select{width:48%}
+}
+
+.predictGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0}
+.predictTile{border:2px solid #11151c;border-radius:14px;padding:11px;background:#fff7df;box-shadow:0 3px 0 #111319}
+.predictTile small{display:block;font:900 .58rem "Courier New";letter-spacing:.08em;color:#747568;margin-bottom:5px}
+.predictTile strong{font:900 1.05rem "Courier New"}
+.orbitClock{font:900 clamp(2.2rem,7vw,5rem)/.95 "Courier New";letter-spacing:-.07em;color:#e9f7ff;text-shadow:0 0 20px #72c7db55}
+.queueItem{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1.5px solid #151820;border-radius:12px;padding:9px;margin:7px 0;background:#fff8e8}
+.queueItem.overdue{background:#f3d2c5}.queueItem.soon{background:#f4e7b9}
+.queueDate{font:800 .65rem "Courier New";color:#6d6f65;margin-top:3px}
+.forecastHero{background:radial-gradient(circle at 85% 20%,#ffffff2b 0 2px,transparent 3px),linear-gradient(145deg,#18213d,#252f55 58%,#394d6b);color:#eef8ff}
+.forecastHero h2{color:#a9d8e6}
+@media(max-width:760px){.predictGrid{grid-template-columns:repeat(2,1fr)}}
+
+
+.exceptionBox{border:2px solid #171a20;border-radius:16px;padding:12px;background:#fff4cf;margin-top:10px}
+.exceptionBadge{display:inline-block;border:1.5px solid #111;border-radius:999px;padding:4px 8px;font:900 .62rem "Courier New";background:#edcc6c}
+.exceptionBadge.active{background:#e39b61}
+.exceptionReadout{font:900 1.55rem "Courier New";margin:5px 0}
+
+</style>
+</head>
+<body>
+<main class="app">
+<div class="chrome">
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <small>PERSONAL FINANCE COMMAND SYSTEM // BUILD 2.3</small>
+      <h1>MONEY OS <span>2009</span></h1>
+    </div>
+    <div class="sysrow">
+      <div id="saveStatus" class="pill"><span class="led"></span>READY</div>
+      <div class="pill">LOCAL MODE</div>
+    </div>
+  </header>
+
+  <section class="deck">
+    <div class="decktop">
+      <div class="hero">
+        <div class="eyebrow">ORBITAL SPEND READOUT</div>
+        <div id="safeSpend" class="big">$0.00</div>
+        <div id="heroMessage" class="heroText">Initialize your balances to wake the system.</div>
+        <div class="statbar">
+          <div class="stat"><small>CHECKING</small><strong id="quickChecking">$0.00</strong></div>
+          <div class="stat"><small>PROTECTED</small><strong id="quickProtected">$0.00</strong></div>
+          <div class="stat"><small>SAVINGS</small><strong id="quickSavings">$0.00</strong></div>
+          <div class="stat"><small>ACTIVE BILLS</small><strong id="quickBills">$0.00</strong></div>
+        </div>
+      </div>
+
+      <aside class="sidepod">
+        <div class="profile">
+          <div class="title">OPERATOR PROFILE // SPACE</div>
+          <div class="profileRow">
+            <div class="avatar">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="39" fill="#efe6ff" stroke="#161822" stroke-width="5"/>
+                <path d="M26 48 C34 27,66 27,74 48 C74 71,61 82,50 82 C39 82,26 71,26 48Z" fill="#8f70b7"/>
+                <circle cx="39" cy="51" r="6" fill="#111"/>
+                <circle cx="61" cy="51" r="6" fill="#111"/>
+                <path d="M40 67 Q50 73 60 67" fill="none" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="50" cy="14" r="6" fill="#ec9b60" stroke="#111" stroke-width="4"/>
+                <path d="M50 20 L50 31" stroke="#111" stroke-width="4"/>
+              </svg>
+            </div>
+            <div class="statusBox">
+              <strong>Operator // Online</strong>
+              <span id="profileStatus">Mood: building the future.</span>
+            </div>
+          </div>
+          <div class="friendline">TOP FRIENDS: Future You · Savings Vault · Paid Bills · Freedom</div>
+        </div>
+
+        <div class="mascot">
+          <div class="label">MILO-9 // FINANCE BUDDY</div>
+          <div class="buddy">
+            <div class="bot"><div class="antenna"></div><div class="botmouth"></div></div>
+            <div id="buddySpeech" class="speech">Feed me your balances and I’ll stop guessing.</div>
+          </div>
+          <button id="pokeBuddy" class="btn small primary">POKE MILO-9</button>
+        </div>
+      </aside>
+    </div>
+
+    <div class="blades">
+      <button class="blade active" data-tab="home">HOME<small>COMMAND</small></button>
+      <button class="blade" data-tab="payday">PAYDAY<small>SPLITTER</small></button>
+      <button class="blade" data-tab="bills">BILLS<small>RADAR</small></button>
+      <button class="blade" data-tab="debt">DEBT<small>ESCAPE</small></button>
+      <button class="blade" data-tab="vault">VAULT<small>SAVINGS</small></button>
+      <button class="blade" data-tab="orbit">ORBIT<small>FORECAST</small></button>
+    </div>
+  </section>
+
+  <section class="content">
+    <section id="home" class="panel active">
+      <div class="grid2">
+        <article class="card console">
+          <h2>CONTROL PANEL // CURRENT POSITION</h2>
+          <label>Checking <input id="checking" type="number" step="0.01" inputmode="decimal"></label>
+          <label>Savings <input id="savings" type="number" step="0.01" inputmode="decimal"></label>
+          <label>Do-not-touch cushion <input id="cushion" type="number" step="0.01" inputmode="decimal"></label>
+        </article>
+        <article class="card">
+          <h2>PROTECTED CIRCUITS</h2>
+          <div class="split"><span>Bills Reserved</span><strong id="billsReserved">$0.00</strong></div>
+          <div class="split"><span>Debt Attack</span><strong id="debtBucket">$0.00</strong></div>
+          <div class="split"><span>Personal</span><strong id="personalBucket">$0.00</strong></div>
+          <div class="split"><span>Free Buffer</span><strong id="freeBuffer">$0.00</strong></div>
+        </article>
+      </div>
+
+      <div class="grid2">
+        <article class="card lcd">
+          <h2>MONEY OS READOUT</h2>
+          <div id="systemAdvice" style="font-weight:850;line-height:1.5">Add balances and bills. The system will separate protected money from spendable money.</div>
+        </article>
+        <article class="card space">
+          <h2>SHIELD / FREEDOM CORE</h2>
+          <div class="split"><span>Shield score</span><strong id="shieldScore">0</strong></div>
+          <div class="meter"><div id="shieldBar"></div></div>
+          <div class="meta" id="shieldCaption" style="color:#c5d5e9;margin-top:8px">System not initialized.</div>
+        </article>
+      </div>
+
+      <article class="card forecastHero">
+        <h2>NEXT-PAYDAY PREDICTOR // LIVE ORBIT</h2>
+        <div class="predictGrid">
+          <div class="predictTile"><small>NEXT PAYDAY</small><strong id="homeNextPayday">SET DATE</strong></div>
+          <div class="predictTile"><small>BILLS BEFORE THEN</small><strong id="homeBillsBefore">$0.00</strong></div>
+          <div class="predictTile"><small>MORE TO PROTECT</small><strong id="homeReserveNeed">$0.00</strong></div>
+          <div class="predictTile"><small>PREDICTED SAFE ROOM</small><strong id="homeForecastSafe">$0.00</strong></div>
+        </div>
+        <div id="homeForecastText" style="font-weight:800;line-height:1.45">Set your next payday in ORBIT to activate forward planning.</div>
+      </article>
+
+      <div class="grid2">
+        <article class="card">
+          <h2>ALLOCATION PERSONALITY</h2>
+          <label>Mode
+            <select id="mode">
+              <option value="balanced">Balanced</option>
+              <option value="debt">Debt Attack</option>
+              <option value="save">Save First</option>
+              <option value="stabilize">Stabilize</option>
+            </select>
+          </label>
+          <div id="modeHint" class="meta"></div>
+        </article>
+        <article class="card">
+          <h2>MYSPACE-STYLE STATUS FEED</h2>
+          <div id="history" class="history"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="payday" class="panel">
+      <div class="grid2">
+        <article class="card console">
+          <h2>PAYDAY PORTAL</h2>
+          <label>Paycheck <input id="paycheck" type="number" step="0.01" inputmode="decimal"></label>
+          <label>Savings % <input id="savePct" type="number" min="0" max="100" step="1"></label>
+          <label>Personal % <input id="personalPct" type="number" min="0" max="100" step="1"></label>
+          <label>Extra debt target <input id="debtTarget" type="number" step="0.01" inputmode="decimal"></label>
+          <button id="previewPayday" class="btn primary">CALCULATE ORBIT</button>
+        </article>
+        <article class="card lcd">
+          <h2>PAYDAY FLIGHT PLAN</h2>
+          <div class="split"><span>Bills</span><strong id="splitBills">$0.00</strong></div>
+          <div class="split"><span>Savings transfer</span><strong id="splitSavings">$0.00</strong></div>
+          <div class="split"><span>Personal</span><strong id="splitPersonal">$0.00</strong></div>
+          <div class="split"><span>Debt Attack</span><strong id="splitDebt">$0.00</strong></div>
+          <div class="split"><span>Free Buffer</span><strong id="splitBuffer">$0.00</strong></div>
+          <button id="commitPayday" class="btn good">COMMIT PAYDAY</button>
+        </article>
+      </div>
+      <article class="card space">
+        <h2>PAYDAY COMMANDER</h2>
+        <div id="paydayAdvice" style="font-weight:800;line-height:1.5">Enter a paycheck to generate an allocation flight plan.</div>
+      </article>
+    </section>
+
+    <section id="bills" class="panel">
+      <div class="grid2">
+        <article class="card console">
+          <h2>ADD RECURRING BILL</h2>
+          <label>Name <input id="billName" placeholder="Car insurance"></label>
+          <label>Amount <input id="billAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+          <label>Due day <input id="billDay" type="number" min="1" max="31" placeholder="1–31"></label>
+          <button id="addBill" class="btn primary">ADD TO RADAR</button>
+        </article>
+        <article class="card">
+          <h2>BILL RADAR</h2>
+          <div class="split"><span>Unpaid this cycle</span><strong id="unpaidBills">$0.00</strong></div>
+          <div class="split"><span>Already reserved</span><strong id="reservedBills2">$0.00</strong></div>
+          <div class="split"><span>Still needs reserving</span><strong id="billGap">$0.00</strong></div>
+          <button id="resetBills" class="btn orange">START NEW BILL CYCLE</button>
+        </article>
+      </div>
+      <div id="billList"></div>
+    </section>
+
+    <section id="debt" class="panel">
+      <div class="grid2">
+        <article class="card console">
+          <h2>DEBT ESCAPE SIMULATOR</h2>
+          <label>Balance <input id="debtBalance" type="number" step="0.01" inputmode="decimal"></label>
+          <label>APR % <input id="debtApr" type="number" step="0.01" inputmode="decimal"></label>
+          <label>Required payment <input id="debtPayment" type="number" step="0.01" inputmode="decimal"></label>
+          <label>Extra monthly <input id="debtExtra" type="number" step="0.01" inputmode="decimal"></label>
+          <button id="runDebt" class="btn primary">SIMULATE ESCAPE</button>
+        </article>
+        <article class="card space">
+          <h2>ESCAPE READOUT</h2>
+          <div class="split"><span>Estimated months</span><strong id="payoffMonths">—</strong></div>
+          <div class="split"><span>Estimated payoff</span><strong id="payoffDate">—</strong></div>
+          <div class="split"><span>Estimated interest</span><strong id="payoffInterest">—</strong></div>
+          <div class="split"><span>Total monthly attack</span><strong id="totalDebtPayment">—</strong></div>
+          <div class="meta" style="color:#c5d5e9">Planning estimate only. Actual lender payoff may differ because of daily interest, fees, and payment timing.</div>
+        </article>
+      </div>
+      <article class="card">
+        <h2>DEBT ATTACK BAY</h2>
+        <div class="split"><span>Reserved for debt</span><strong id="debtReserved2">$0.00</strong></div>
+        <label>Apply payment <input id="applyDebtAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+        <button id="applyDebt" class="btn good">APPLY DEBT PAYMENT</button>
+      </article>
+    </section>
+
+
+    <section id="orbit" class="panel">
+      <div class="grid2">
+        <article class="card console">
+          <h2>ORBIT SETUP // PAY CYCLE</h2>
+          <label>Next payday <input id="nextPayday" type="date"></label>
+          <label>Pay frequency
+            <select id="payFrequency">
+              <option value="biweekly">Every 2 weeks</option>
+              <option value="weekly">Weekly</option>
+              <option value="semimonthly">Twice monthly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </label>
+          <label>Normal paycheck <input id="expectedPay" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+          <div class="meta">This is your normal take-home baseline. One unusual check will no longer overwrite it.</div>
+          <div class="exceptionBox">
+            <div class="exceptionBadge" id="exceptionBadge">NORMAL CHECK</div>
+            <label style="margin-top:10px">This paycheck
+              <select id="payExceptionType">
+                <option value="none">Normal</option>
+                <option value="short">Short / unpaid time</option>
+                <option value="overtime">Overtime</option>
+                <option value="bonus">Bonus / extra pay</option>
+                <option value="custom">Other / custom</option>
+              </select>
+            </label>
+            <label>Expected this check <input id="exceptionPay" type="number" step="0.01" inputmode="decimal" placeholder="Leave blank = normal"></label>
+            <label>Note <input id="exceptionNote" placeholder="e.g. 2 unpaid days"></label>
+            <div class="meta">ORBIT forecasts the next deposit using this override only. Your normal paycheck stays intact.</div>
+          </div>
+          <div class="meta" style="margin-top:9px">Money OS does not invent your payday. Enter the real next date once; the forecast uses it as its anchor.</div>
+        </article>
+        <article class="card forecastHero">
+          <h2>COUNTDOWN // NEXT PAYDAY</h2>
+          <div id="paydayCountdown" class="orbitClock">—</div>
+          <div id="paydayCountdownText" style="font-weight:800">Set your next payday to initialize countdown.</div>
+          <div class="split"><span>Forecast deposit</span><strong id="forecastDeposit">$0.00</strong></div>
+          <div class="split"><span>Check status</span><strong id="forecastCheckStatus">NORMAL</strong></div>
+          <div class="split"><span>Next bonus-pay month</span><strong id="bonusPayMonth">—</strong></div>
+        </article>
+      </div>
+
+      <div class="predictGrid">
+        <div class="predictTile"><small>BILLS DUE BEFORE PAYDAY</small><strong id="orbitBillsBefore">$0.00</strong></div>
+        <div class="predictTile"><small>RESERVE SHORTFALL</small><strong id="orbitReserveNeed">$0.00</strong></div>
+        <div class="predictTile"><small>SAFE ROOM UNTIL PAYDAY</small><strong id="orbitSafeUntil">$0.00</strong></div>
+        <div class="predictTile"><small>EST. SAFE AFTER PAYDAY</small><strong id="orbitSafeAfter">$0.00</strong></div>
+      </div>
+
+      <div class="grid2">
+        <article class="card lcd">
+          <h2>MISSION QUEUE // BEFORE NEXT PAYDAY</h2>
+          <div id="upcomingBillQueue"></div>
+        </article>
+        <article class="card space">
+          <h2>PREDICTIVE COMMANDER</h2>
+          <div id="forecastAdvice" style="font-weight:800;line-height:1.55">Enter your next payday to activate the predictive layer.</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="vault" class="panel">
+      <div class="grid2">
+        <article class="card">
+          <h2>SAVINGS VAULT</h2>
+          <label>Goal <input id="savingsGoal" type="number" step="0.01" inputmode="decimal"></label>
+          <div class="meter"><div id="savingsBar"></div></div>
+          <div class="split"><span>Progress</span><strong id="savingsProgress">0%</strong></div>
+          <div class="split"><span>Remaining</span><strong id="savingsRemaining">$0.00</strong></div>
+        </article>
+        <article class="card console">
+          <h2>BACKUP / RESTORE STATION</h2>
+          <button id="exportData" class="btn primary">EXPORT BACKUP</button>
+          <label class="filebtn">IMPORT BACKUP<input id="importData" type="file" accept="application/json"></label>
+          <button id="resetData" class="btn danger">RESET LOCAL DATA</button>
+        </article>
+      </div>
+      <article class="card space">
+        <h2>VAULT NOTE</h2>
+        <div style="font-weight:800;line-height:1.5">Your values remain local to this browser on this exact hosted site. Export a backup before major upgrades. Cloud sync can be added later without exposing personal values in the public source code.</div>
+      </article>
+    </section>
+  </section>
+
+  <div class="consoleStrip">
+    <div class="track"></div>
+    <div class="knob"></div>
+    <div class="track"></div>
+  </div>
+</div>
+</div>
+<div class="footer">MONEY OS 2009 // BUILD 2.3.1 // PAYCHECK EXCEPTION ENGINE</div>
+</main>
+
+<script>
+const KEY='moneyOS2009_v2';
+const defaults={
+  checking:0,savings:0,cushion:0,mode:'balanced',
+  buckets:{bills:0,personal:0,debt:0,buffer:0},
+  payday:{paycheck:0,savePct:15,personalPct:10,debtTarget:0,lastSplit:null},
+  bills:[],debt:{balance:0,apr:0,payment:0,extra:0},planner:{nextPayday:'',frequency:'biweekly',expectedPay:0,exception:{type:'none',amount:0,note:''}},savingsGoal:3000,history:[]
+};
+const $=id=>document.getElementById(id);
+const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v)||0);
+const val=id=>Math.max(0,Number($(id).value)||0);
+const clone=o=>JSON.parse(JSON.stringify(o));
+function merge(a,b){
+  if(!b||typeof b!=='object')return clone(a);
+  const out=clone(a);
+  Object.keys(b).forEach(k=>{
+    out[k]=(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&out[k]&&typeof out[k]==='object'&&!Array.isArray(out[k]))?merge(out[k],b[k]):b[k]
+  });
+  return out;
+}
+let state;try{state=merge(defaults,JSON.parse(localStorage.getItem(KEY)||'null'))}catch{state=clone(defaults)}
+if(!Array.isArray(state.history))state.history=[];
+if(!state.planner.exception||typeof state.planner.exception!=='object')state.planner.exception={type:'none',amount:0,note:''};
+function stamp(){return new Date().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+function log(msg){state.history.unshift({at:stamp(),msg});state.history=state.history.slice(0,30)}
+let saveTimer;
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  $('saveStatus').innerHTML='<span class="led"></span>SAVED ✓';
+  clearTimeout(saveTimer);saveTimer=setTimeout(()=>$('saveStatus').innerHTML='<span class="led"></span>READY',900)
+}
+function unpaid(){return state.bills.filter(b=>!b.paid).reduce((t,b)=>t+(Number(b.amount)||0),0)}
+function gap(){return Math.max(0,unpaid()-state.buckets.bills)}
+function protectedTotal(){return state.cushion+state.buckets.bills+state.buckets.debt}
+function safeSpend(){return Math.max(0,state.checking-protectedTotal())}
+
+function localDay(d=new Date()){const x=new Date(d);x.setHours(0,0,0,0);return x}
+function parseLocalDate(s){if(!s)return null;const p=s.split('-').map(Number);if(p.length!==3||p.some(Number.isNaN))return null;return new Date(p[0],p[1]-1,p[2])}
+function fmtDate(d){return d?d.toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}):'—'}
+function daysBetween(a,b){return Math.round((localDay(b)-localDay(a))/86400000)}
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function activeDueDate(b){
+  const t=localDay(),day=Math.max(1,Math.min(31,Number(b.day)||1));
+  const candidate=new Date(t.getFullYear(),t.getMonth(),Math.min(day,daysInMonth(t.getFullYear(),t.getMonth())));
+  return candidate;
+}
+function upcomingBeforePayday(){
+  const end=parseLocalDate(state.planner.nextPayday);if(!end)return[];
+  const t=localDay();if(end<t)return[];
+  return state.bills.filter(b=>!b.paid).map((b,i)=>({b,i,due:activeDueDate(b)})).filter(x=>x.due<=end).sort((a,b)=>a.due-b.due);
+}
+function billsBeforePayday(){return upcomingBeforePayday().reduce((t,x)=>t+(Number(x.b.amount)||0),0)}
+function reserveNeedBeforePayday(){return Math.max(0,billsBeforePayday()-state.buckets.bills)}
+function safeUntilPayday(){return Math.max(0,state.checking-state.cushion-state.buckets.debt-Math.max(state.buckets.bills,billsBeforePayday()))}
+function forecastPay(){
+  const ex=state.planner.exception||{};
+  return ex.type!=='none'&&Number(ex.amount)>0?Math.max(0,Number(ex.amount)):Math.max(0,Number(state.planner.expectedPay)||0)
+}
+function forecastSplit(){return split(forecastPay())}
+function safeAfterPayday(){
+  const p=forecastPay(),q=forecastSplit();
+  if(!p)return safeUntilPayday();
+  const checking=state.checking+p-q.savings;
+  const protectedFuture=state.cushion+(state.buckets.debt+q.debt)+(state.buckets.bills+q.bills);
+  return Math.max(0,checking-protectedFuture);
+}
+function bonusPayMonth(){
+  const start=parseLocalDate(state.planner.nextPayday);if(!start)return'—';
+  const f=state.planner.frequency;if(!['biweekly','weekly'].includes(f))return f==='semimonthly'?'2 checks / month':'—';
+  const step=f==='biweekly'?14:7,target=f==='biweekly'?3:5,counts={};
+  let d=new Date(start);
+  for(let i=0;i<80;i++){const k=`${d.getFullYear()}-${d.getMonth()}`;counts[k]=(counts[k]||0)+1;if(counts[k]===target)return d.toLocaleDateString([], {month:'long',year:'numeric'});d.setDate(d.getDate()+step)}
+  return'—';
+}
+function forecastCopy(){
+  const pd=parseLocalDate(state.planner.nextPayday);if(!pd)return'Enter the real next payday date. Once anchored, Money OS will rank unpaid bills that land before it and show what must stay untouchable.';
+  const t=localDay(),days=daysBetween(t,pd);if(days<0)return'That payday is in the past. Update it to your next real payday so the forecast stays trustworthy.';
+  const due=billsBeforePayday(),need=reserveNeedBeforePayday();
+  if(need>0)return`${money(due)} in unpaid bills lands before payday. Your current bill reserve is short by ${money(need)}, so that shortfall gets priority over optional spending.`;
+  if(due>0)return`${money(due)} in unpaid bills lands before payday and your current Bills Reserved bucket can cover it. Estimated safe room until then is ${money(safeUntilPayday())}.`;
+  return`No currently-unpaid recurring bills are scheduled before this payday. Estimated safe room until then is ${money(safeUntilPayday())}.`;
+}
+
+function modeCopy(){
+  return {
+    balanced:'Balanced keeps bills protected while splitting the rest across saving, personal money, debt attack, and buffer.',
+    debt:'Debt Attack protects the basics first, then gives extra available cash more gravity toward debt.',
+    save:'Save First favors the vault after bills are protected.',
+    stabilize:'Stabilize favors breathing room and bill protection before aggressive goals.'
+  }[state.mode]
+}
+function split(amount=null){
+  const p=Math.max(0,amount===null?(state.payday.paycheck||0):amount);let left=p;
+  const bills=Math.min(left,gap());left-=bills;
+  let sPct=state.payday.savePct/100,pPct=state.payday.personalPct/100,dTarget=state.payday.debtTarget;
+  if(state.mode==='debt'){sPct*=.75;pPct*=.65;dTarget=Math.max(dTarget,left*.35)}
+  if(state.mode==='save'){sPct=Math.max(sPct,.22);pPct*=.8}
+  if(state.mode==='stabilize'){sPct=Math.min(sPct,.10);pPct=Math.min(pPct,.08);dTarget=Math.min(dTarget,left*.10)}
+  const savings=Math.min(left,p*sPct);left-=savings;
+  const personal=Math.min(left,p*pPct);left-=personal;
+  const debt=Math.min(left,Math.max(0,dTarget));left-=debt;
+  return{bills,savings,personal,debt,buffer:left}
+}
+function shield(){
+  if(state.checking<=0&&state.savings<=0)return 0;
+  const monthly=Math.max(1,state.bills.reduce((t,b)=>t+(Number(b.amount)||0),0));
+  const billCoverage=Math.min(1,state.buckets.bills/Math.max(1,unpaid()))*35;
+  const cushionCoverage=Math.min(1,state.checking/Math.max(1,state.cushion||monthly*.5))*25;
+  const savingsCoverage=Math.min(1,state.savings/monthly)*25;
+  const debtReady=state.debt.balance?Math.min(1,state.buckets.debt/Math.max(1,state.debt.payment||1))*15:15;
+  return Math.max(0,Math.min(100,Math.round(billCoverage+cushionCoverage+savingsCoverage+debtReady)))
+}
+function advice(){
+  if(state.checking===0&&state.savings===0)return'Enter your real balances, then add recurring bills. Money OS will separate protected money from spendable money.';
+  if(gap()>0)return`${money(gap())} still needs to be reserved for active bills. That money has first priority.`;
+  if(state.checking<protectedTotal())return`Checking is below the amount currently protected. Safe to Spend is locked at ${money(0)} until the gap is repaired.`;
+  if(state.debt.balance>0&&state.buckets.debt>0)return`${money(state.buckets.debt)} is staged in Debt Attack. Safe to Spend excludes it so it cannot get accidentally consumed.`;
+  return`${money(safeSpend())} currently sits outside your cushion, bill reserve, and debt reserve. That is a ceiling, not permission to burn it.`;
+}
+function buddyLine(){
+  const sc=shield();
+  if(state.checking===0&&state.savings===0)return'Feed me balances and bills. I hate guessing.';
+  if(gap()>0)return`Radar alert: ${money(gap())} still needs bill protection.`;
+  if(sc<35)return'Shields are thin. Stabilize first and keep your hands off protected cash.';
+  if(sc<70)return'Not bad. The ship is stable, but we can still strengthen the vault.';
+  return'Green lights. Keep this boringly consistent and Future You wins.';
+}
+function paydayLine(){
+  const p=state.payday.paycheck||0;if(!p)return'Enter a paycheck to generate an allocation flight plan.';
+  const q=state.payday.lastSplit||split();
+  return`From ${money(p)}: protect ${money(q.bills)} for bills, move ${money(q.savings)} to savings, reserve ${money(q.debt)} for debt, keep ${money(q.personal)} personal, and leave ${money(q.buffer)} as buffer.`
+}
+function setInput(id,v,blank=true){const el=$(id);if(document.activeElement===el)return;el.value=blank?(v||''):v}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function render(){
+  setInput('checking',state.checking);setInput('savings',state.savings);setInput('cushion',state.cushion);
+  setInput('paycheck',state.payday.paycheck);setInput('savePct',state.payday.savePct,false);setInput('personalPct',state.payday.personalPct,false);setInput('debtTarget',state.payday.debtTarget);
+  setInput('debtBalance',state.debt.balance);setInput('debtApr',state.debt.apr);setInput('debtPayment',state.debt.payment);setInput('debtExtra',state.debt.extra);setInput('savingsGoal',state.savingsGoal);
+  setInput('nextPayday',state.planner.nextPayday);setInput('expectedPay',state.planner.expectedPay);setInput('exceptionPay',state.planner.exception.amount);if(document.activeElement!==$('exceptionNote'))$('exceptionNote').value=state.planner.exception.note||'';if(document.activeElement!==$('payExceptionType'))$('payExceptionType').value=state.planner.exception.type||'none';if(document.activeElement!==$('payFrequency'))$('payFrequency').value=state.planner.frequency;
+  if(document.activeElement!==$('mode'))$('mode').value=state.mode;
+  $('safeSpend').textContent=money(safeSpend());$('quickChecking').textContent=money(state.checking);$('quickProtected').textContent=money(protectedTotal());
+  $('quickSavings').textContent=money(state.savings);$('quickBills').textContent=money(unpaid());
+  $('billsReserved').textContent=money(state.buckets.bills);$('debtBucket').textContent=money(state.buckets.debt);$('personalBucket').textContent=money(state.buckets.personal);$('freeBuffer').textContent=money(state.buckets.buffer);
+  $('heroMessage').textContent=unpaid()?`${money(unpaid())} in active bills are waiting this cycle.`:'No unpaid bills are active this cycle.';
+  $('systemAdvice').textContent=advice();$('modeHint').textContent=modeCopy();$('buddySpeech').textContent=buddyLine();$('paydayAdvice').textContent=paydayLine();
+  $('profileStatus').textContent=`Mood: ${shield()>=70?'locked in':shield()>=40?'steady':'rebuilding shields'}.`;
+  $('shieldScore').textContent=shield();$('shieldBar').style.width=shield()+'%';
+  $('shieldCaption').textContent=shield()>=80?'Strong reserve coverage and low immediate pressure.':shield()>=55?'Stable, but there is room to reinforce the system.':shield()>=30?'Some protection exists, but the system is still exposed.':'Very little protection is currently registered.';
+  const q=state.payday.lastSplit||split();
+  $('splitBills').textContent=money(q.bills);$('splitSavings').textContent=money(q.savings);$('splitPersonal').textContent=money(q.personal);$('splitDebt').textContent=money(q.debt);$('splitBuffer').textContent=money(q.buffer);
+  $('unpaidBills').textContent=money(unpaid());$('reservedBills2').textContent=money(state.buckets.bills);$('billGap').textContent=money(gap());$('debtReserved2').textContent=money(state.buckets.debt);
+  const pct=state.savingsGoal?Math.min(100,state.savings/state.savingsGoal*100):0;$('savingsBar').style.width=pct+'%';$('savingsProgress').textContent=Math.round(pct)+'%';$('savingsRemaining').textContent=money(Math.max(0,state.savingsGoal-state.savings));
+
+  const pd=parseLocalDate(state.planner.nextPayday),today=localDay(),dleft=pd?daysBetween(today,pd):null;
+  $('homeNextPayday').textContent=pd?fmtDate(pd):'SET DATE';$('homeBillsBefore').textContent=money(billsBeforePayday());$('homeReserveNeed').textContent=money(reserveNeedBeforePayday());$('homeForecastSafe').textContent=money(safeUntilPayday());$('homeForecastText').textContent=forecastCopy();
+  $('orbitBillsBefore').textContent=money(billsBeforePayday());$('orbitReserveNeed').textContent=money(reserveNeedBeforePayday());$('orbitSafeUntil').textContent=money(safeUntilPayday());$('orbitSafeAfter').textContent=money(safeAfterPayday());$('bonusPayMonth').textContent=bonusPayMonth();$('forecastAdvice').textContent=forecastCopy();
+  const ex=state.planner.exception||{},exActive=ex.type!=='none'&&Number(ex.amount)>0;
+  $('forecastDeposit').textContent=money(forecastPay());$('forecastCheckStatus').textContent=exActive?ex.type.toUpperCase():'NORMAL';
+  $('exceptionBadge').textContent=exActive?`EXCEPTION // ${ex.type.toUpperCase()}`:'NORMAL CHECK';$('exceptionBadge').classList.toggle('active',exActive);
+  if(pd&&dleft>=0){$('paydayCountdown').textContent=dleft===0?'TODAY':`${dleft}D`;$('paydayCountdownText').textContent=dleft===0?'Payday is today. Run the PAYDAY flight plan when the deposit actually lands.':`${fmtDate(pd)} // ${dleft} day${dleft===1?'':'s'} away.`}
+  else{$('paydayCountdown').textContent='—';$('paydayCountdownText').textContent=pd?'Update the date — this payday has passed.':'Set your next payday to initialize countdown.'}
+  const uq=upcomingBeforePayday();$('upcomingBillQueue').innerHTML=!pd?'<div class="meta">No payday anchor yet.</div>':uq.length?uq.map(x=>{const dd=daysBetween(today,x.due),cls=dd<0?'overdue':dd<=3?'soon':'';return `<div class="queueItem ${cls}"><div><strong>${esc(x.b.name)}</strong><div class="queueDate">${dd<0?`${Math.abs(dd)} DAY${Math.abs(dd)===1?'':'S'} OVERDUE`:dd===0?'DUE TODAY':`DUE ${fmtDate(x.due).toUpperCase()} // ${dd}D`}</div></div><strong>${money(x.b.amount)}</strong></div>`}).join(''):'<div class="meta">No unpaid recurring bills fall before this payday.</div>';
+
+  $('billList').innerHTML=state.bills.length?state.bills.map((b,i)=>`<div class="bill ${b.paid?'paid':''}"><div class="billhead"><div><strong>${esc(b.name)}</strong><div class="meta">Due day ${b.day}</div></div><div style="text-align:right"><strong>${money(b.amount)}</strong><br><span class="tag ${b.paid?'good':'warn'}">${b.paid?'PAID':'UNPAID'}</span></div></div><button class="btn small ${b.paid?'orange':'good'}" onclick="togglePaid(${i})">${b.paid?'UNDO PAYMENT':'MARK PAID'}</button><button class="btn small danger" onclick="removeBill(${i})">REMOVE</button></div>`).join(''):'<div class="card">No bills added yet.</div>';
+  $('history').innerHTML=state.history.length?state.history.map(x=>`<div class="log"><time>${esc(x.at)}</time>${esc(x.msg)}</div>`).join(''):'<div class="meta">No activity yet. Your financial status feed will appear here.</div>';
+}
+function bind(id,path){$(id).addEventListener('change',()=>{let o=state,p=path.split('.');for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val(id);save();render()})}
+['checking','savings','cushion'].forEach(id=>bind(id,id));bind('paycheck','payday.paycheck');bind('savePct','payday.savePct');bind('personalPct','payday.personalPct');bind('debtTarget','payday.debtTarget');bind('debtBalance','debt.balance');bind('debtApr','debt.apr');bind('debtPayment','debt.payment');bind('debtExtra','debt.extra');bind('savingsGoal','savingsGoal');bind('expectedPay','planner.expectedPay');bind('exceptionPay','planner.exception.amount');
+$('nextPayday').addEventListener('change',()=>{state.planner.nextPayday=$('nextPayday').value;log(state.planner.nextPayday?`Next payday anchored to ${state.planner.nextPayday}.`:'Next payday cleared.');save();render()});
+$('payFrequency').addEventListener('change',()=>{state.planner.frequency=$('payFrequency').value;log(`Pay frequency set to ${state.planner.frequency}.`);save();render()});
+$('payExceptionType').addEventListener('change',()=>{state.planner.exception.type=$('payExceptionType').value;if(state.planner.exception.type==='none'){state.planner.exception.amount=0;state.planner.exception.note=''}log(state.planner.exception.type==='none'?'Next paycheck set to normal.':`Paycheck exception set: ${state.planner.exception.type}.`);save();render()});
+$('exceptionNote').addEventListener('change',()=>{state.planner.exception.note=$('exceptionNote').value.trim();save();render()});
+$('mode').addEventListener('change',()=>{state.mode=$('mode').value;state.payday.lastSplit=null;log(`Allocation mode changed to ${state.mode}.`);save();render()});
+document.querySelectorAll('.blade').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.blade,.panel').forEach(x=>x.classList.remove('active'));btn.classList.add('active');$(btn.dataset.tab).classList.add('active')});
+$('pokeBuddy').onclick=()=>{const lines=['Don’t touch bill money. I can see you.','Tiny wins compound. So do bad habits.','Future You just sent a friend request.','The vault likes consistency more than motivation.','Debt hates boring people who keep paying it.'];$('buddySpeech').textContent=lines[Math.floor(Math.random()*lines.length)]};
+$('previewPayday').onclick=()=>{state.payday.lastSplit=split();save();render()};
+$('commitPayday').onclick=()=>{const p=Math.max(0,state.payday.paycheck||0);if(!p)return alert('Enter a paycheck first.');const q=state.payday.lastSplit||split();state.checking+=p-q.savings;state.savings+=q.savings;state.buckets.bills+=q.bills;state.buckets.personal+=q.personal;state.buckets.debt+=q.debt;state.buckets.buffer+=q.buffer;log(`Payday committed: ${money(p)} received; ${money(q.savings)} moved to savings.`);
+const usedException=state.planner.exception&&state.planner.exception.type!=='none';
+if(!usedException)state.planner.expectedPay=p;
+else log(`Paycheck exception completed: ${state.planner.exception.type}${state.planner.exception.note?' // '+state.planner.exception.note:''}. Normal baseline remains ${money(state.planner.expectedPay)}.`);
+state.planner.exception={type:'none',amount:0,note:''};
+const anchor=parseLocalDate(state.planner.nextPayday);if(anchor&&localDay()>=anchor&&['weekly','biweekly','monthly'].includes(state.planner.frequency)){if(state.planner.frequency==='weekly')anchor.setDate(anchor.getDate()+7);else if(state.planner.frequency==='biweekly')anchor.setDate(anchor.getDate()+14);else anchor.setMonth(anchor.getMonth()+1);state.planner.nextPayday=`${anchor.getFullYear()}-${String(anchor.getMonth()+1).padStart(2,'0')}-${String(anchor.getDate()).padStart(2,'0')}`;log(`Next payday advanced to ${state.planner.nextPayday}.`)}state.payday.paycheck=0;state.payday.lastSplit=null;save();render()};
+$('addBill').onclick=()=>{const name=$('billName').value.trim(),amount=val('billAmount'),day=Math.max(1,Math.min(31,Math.round(val('billDay'))||1));if(!name||!amount)return alert('Enter a bill name and amount.');state.bills.push({name,amount,day,paid:false});log(`Bill added: ${name} ${money(amount)} due day ${day}.`);$('billName').value='';$('billAmount').value='';$('billDay').value='';save();render()};
+window.togglePaid=i=>{const b=state.bills[i];if(!b)return;if(!b.paid){if(state.checking<b.amount&&!confirm(`Checking is below ${money(b.amount)}. Record this bill as paid anyway?`))return;state.checking=Math.max(0,state.checking-b.amount);state.buckets.bills=Math.max(0,state.buckets.bills-b.amount);b.paid=true;log(`Bill paid: ${b.name} ${money(b.amount)}.`)}else{state.checking+=b.amount;state.buckets.bills+=b.amount;b.paid=false;log(`Payment undone: ${b.name} ${money(b.amount)} restored.`)}save();render()};
+window.removeBill=i=>{const b=state.bills[i];if(!b)return;if(!confirm(`Remove ${b.name}?`))return;state.bills.splice(i,1);log(`Bill removed: ${b.name}.`);save();render()};
+$('resetBills').onclick=()=>{if(!state.bills.length)return alert('No bills to reset.');if(!confirm('Start a new bill cycle and mark every recurring bill unpaid?'))return;state.bills.forEach(b=>b.paid=false);log('New bill cycle started.');save();render()};
+function simulateDebt(){let bal=Math.max(0,state.debt.balance),r=Math.max(0,state.debt.apr)/1200,p=Math.max(0,state.debt.payment+state.debt.extra),m=0,int=0;if(!bal||!p){$('payoffMonths').textContent='—';$('payoffDate').textContent='—';$('payoffInterest').textContent='—';$('totalDebtPayment').textContent=money(p);return}while(bal>.005&&m<1200){const interest=bal*r;if(r>0&&p<=interest){m=Infinity;break}int+=interest;bal+=interest;bal-=Math.min(p,bal);m++}$('payoffMonths').textContent=isFinite(m)?m:'Payment too low';$('payoffInterest').textContent=isFinite(m)?money(int):'—';$('totalDebtPayment').textContent=money(p);if(isFinite(m)){const d=new Date();d.setMonth(d.getMonth()+m);$('payoffDate').textContent=d.toLocaleDateString([], {month:'short',year:'numeric'})}else $('payoffDate').textContent='—'}
+$('runDebt').onclick=simulateDebt;
+$('applyDebt').onclick=()=>{const requested=val('applyDebtAmount');if(!requested)return alert('Enter a payment amount.');const amount=Math.min(requested,state.buckets.debt||requested,state.checking,state.debt.balance||requested);if(amount<=0)return alert('No available amount can be applied.');state.checking=Math.max(0,state.checking-amount);state.buckets.debt=Math.max(0,state.buckets.debt-amount);if(state.debt.balance)state.debt.balance=Math.max(0,state.debt.balance-amount);log(`Debt payment recorded: ${money(amount)}.`);$('applyDebtAmount').value='';save();render();simulateDebt()};
+$('exportData').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='money-os-2009-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('importData').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=merge(defaults,JSON.parse(r.result));log('Backup imported.');save();render();simulateDebt()}catch{alert('That backup file could not be read.')}};r.readAsText(f)};
+$('resetData').onclick=()=>{if(!confirm('Erase Money OS data stored in this browser? Export a backup first if you need it.'))return;state=clone(defaults);localStorage.removeItem(KEY);log('Local data reset.');save();render();simulateDebt()};
+render();simulateDebt();
+</script>
+</body>
+</html>
